@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🩸 NexusBlood
 
-## Getting Started
+> The Modern Blood Management Cloud
 
-First, run the development server:
+NexusBlood is a full-stack, role-based SaaS platform designed to modernize the medical supply chain. It connects autonomous Donors, Hospitals, and Blood Banks into a single real-time ecosystem, eliminating critical supply shortages through predictive appointment telemetry and native cloud inventory synchronization.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Role-Based Workspaces**: Completely segregated, highly secure dashboard views explicitly tailored for Individual Donors, Hospitals, and Blood Banks handled by Edge-rendered Node authentication.
+* **Real-time Demand Queue**: Hospitals can instantly locate live, healthy platelet inventories and submit zero-latency direct fulfillment requests to surrounding active Blood Banks.
+* **Predictive Inventory Mapping**: A dynamic stock-management table that autonomously replenishes valid physical unit counts the instant registered Donor Appointments physically arrive and complete verifiable donations.
+* **IoT Storage Metrics Simulator**: Live chronological chart interfaces mapped natively to hardware mock-simulations verifying viable temperatures across blood bank vaults (`2.0°C - 6.0°C`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Framework**: [Next.js 14](https://nextjs.org/) (App Router & React Server Components)
+* **Database**: [Supabase](https://supabase.com/) (PostgreSQL Cloud Instance + Transaction Pooler)
+* **ORM**: [Prisma](https://www.prisma.io/) (Fully-Typed Edge Architecture)
+* **Authentication**: [Clerk](https://clerk.dev/) (Native Next.js Server Integration)
+* **Design & Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn UI](https://ui.shadcn.com/) (Lucide Icons)
 
-## Learn More
+## 📦 Local Installation
 
-To learn more about Next.js, take a look at the following resources:
+To run this project locally, ensure you have active Node modules and secure environment variables mapped to your active cloud providers.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/nexusblood.git
+   cd nexusblood
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Deploy on Vercel
+3. **Configure Environment Variables:**
+   Create a root `.env` file and insert your configuration keys.
+   ```env
+   # Clerk Keys
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+   CLERK_SECRET_KEY=sk_test_...
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   # Supabase DB (Prisma Pooler format)
+   DATABASE_URL="postgresql://postgres.[ID]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true&connect_timeout=30"
+   DIRECT_URL="postgresql://postgres.[ID]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Synchronize & Seed the Database:**
+   ```bash
+   npx prisma generate
+   npx prisma db push --accept-data-loss
+   npx tsx scripts/seed.ts
+   ```
+
+5. **Start the Production Engine:**
+   ```bash
+   npm run dev
+   ```
+   *Your application will securely boot at `http://localhost:3000`.*

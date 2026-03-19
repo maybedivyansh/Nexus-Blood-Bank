@@ -1,101 +1,83 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Droplet, Activity, Building2, ShieldCheck, HeartPulse } from "lucide-react";
+import { db } from "@/lib/db";
 
-export default function Home() {
+// Force dynamic so we get real-time stats
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  // Query total units delivered
+  const totalDelivered = await db.order.aggregate({
+    where: { status: "APPROVED" },
+    _sum: { units: true }
+  });
+
+  const unitsCount = totalDelivered._sum.units || 0;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Header */}
+      <header className="px-6 py-4 flex items-center justify-between border-b">
+        <div className="flex items-center gap-2">
+          <Droplet className="h-6 w-6 text-primary" />
+          <span className="text-xl font-bold tracking-tight">NexusBlood</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link href="/sign-in" className="text-sm font-medium hover:text-primary transition-colors">
+            Sign In
+          </Link>
+          <Link href="/sign-up">
+            <Button variant="outline">
+              Get Started
+            </Button>
+          </Link>
+        </div>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-background to-secondary/20">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <Badge className="mx-auto" variant="secondary">
+            <HeartPulse className="w-4 h-4 mr-2 text-primary" />
+            Empowering Life-Saving Connections
+          </Badge>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-balance">
+            The Modern Blood <br /> <span className="text-primary">Management Cloud</span>
+          </h1>
+          <p className="max-w-2xl mx-auto text-xl text-muted-foreground text-balance">
+            Connecting hospitals to critical blood inventories in real-time. Fast fulfillment, transparent tracking, and impact-driven donation campaigns.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Link href="/sign-up" className="w-full sm:w-auto">
+              <Button size="lg" className="gap-2 w-full">
+                <HeartPulse className="h-5 w-5" /> Donate Blood
+              </Button>
+            </Link>
+            <Link href="/sign-up" className="w-full sm:w-auto">
+              <Button size="lg" variant="secondary" className="gap-2 w-full">
+                <Building2 className="h-5 w-5 text-muted-foreground" /> Hospital Portal
+              </Button>
+            </Link>
+            <Link href="/sign-up" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="gap-2 w-full">
+                <ShieldCheck className="h-5 w-5 text-muted-foreground" /> Blood Bank Login
+              </Button>
+            </Link>
+          </div>
+
+          <div className="pt-16 pb-8 border-t mt-12 w-full">
+            <div className="inline-flex flex-col items-center justify-center p-6 bg-card rounded-2xl shadow-sm border border-primary/10">
+              <Activity className="h-8 w-8 text-primary mb-3" />
+              <h3 className="text-4xl font-black text-foreground">{unitsCount.toLocaleString()}</h3>
+              <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest mt-1">Total Units Delivered</p>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
+
+import { Badge } from "@/components/ui/badge";

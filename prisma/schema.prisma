@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id                   String                @id @default(cuid())
+  clerkId              String                @unique
+  email                String                @unique
+  password             String?
+  name                 String
+  internal_role        String                @default("DONOR")
+  latitude             Float?
+  longitude            Float?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  inventories          Inventory[]           @relation("BankInventory")
+  ordersPlaced         Order[]               @relation("HospitalOrders")
+  ordersReceived       Order[]               @relation("BankOrders")
+  donationsAsDonor     DonationAppointment[] @relation("DonorAppointments")
+  donationsAsBank      DonationAppointment[] @relation("BankAppointments")
+  metrics              StorageMetric[]       @relation("BankMetrics")
+}
+
+model StorageMetric {
+  id        String   @id @default(cuid())
+  bankId    String
+  temp      Float
+  timestamp DateTime @default(now())
+
+  bank      User     @relation("BankMetrics", fields: [bankId], references: [id])
+}
+
+model Inventory {
+  id        String   @id @default(cuid())
+  bankId    String
+  bloodType String
+  units     Int
+  expiryDate DateTime
+  createdAt DateTime @default(now())
+
+  bank      User     @relation("BankInventory", fields: [bankId], references: [id])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  hospitalId String
+  bankId     String
+  bloodType  String
+  units      Int
+  status     String      @default("PENDING")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  hospital   User        @relation("HospitalOrders", fields: [hospitalId], references: [id])
+  bank       User        @relation("BankOrders", fields: [bankId], references: [id])
+}
+
+model DonationAppointment {
+  id        String   @id @default(cuid())
+  donorId   String
+  bankId    String
+  bloodType String   @default("UNKNOWN")
+  date      DateTime
+  status    String   @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  createdAt DateTime @default(now())
+
+  donor     User     @relation("DonorAppointments", fields: [donorId], references: [id])
+  bank      User     @relation("BankAppointments", fields: [bankId], references: [id])
+}
